@@ -7,14 +7,20 @@ lexer grammar HbsLexer;
 
   String end = "}}";
 
+  // https://handlebarsjs.com/guide/expressions.html#whitespace-control
   boolean whiteSpaceControl;
 
+  /**
+  * @param start: it is `{{` in hbs
+  * @param end: it is `}}` in hbs
+  */
   public HbsLexer(CharStream input, String start, String end) {
     this(input);
     this.start = start;
     this.end = end;
   }
 
+  // read until `token` was met
   private boolean consumeUntil(final String token) {
     int tokenOffset = 0;
     int colOffset = 0;
@@ -51,6 +57,9 @@ lexer grammar HbsLexer;
     return true;
   }
 
+
+  // skip comment
+  // comment starts syntax is `{{!-- --}}` or `{{! }}`
   private boolean comment(final String start, final String end) {
     String commentClose;
     if (ahead(start + "!--")) {
@@ -75,6 +84,7 @@ lexer grammar HbsLexer;
     return true;
   }
 
+  // \x ... end
   private boolean varEscape(final String start, final String end) {
     if (ahead("\\" + start)) {
       int offset = start.length();
@@ -119,6 +129,8 @@ lexer grammar HbsLexer;
     return endToken(delim, "");
   }
 
+  // https://handlebarsjs.com/guide/expressions.html#subexpressions
+  // test lookahead is `subtype + }}`, `}}` is the default delim here.
   private boolean endToken(final String delim, String subtype) {
     boolean matches = tryToken(subtype + delim);
     if (!matches) {
@@ -130,6 +142,7 @@ lexer grammar HbsLexer;
     return matches;
   }
 
+  // if current lookahead contains `text`
   private boolean tryToken(final String text) {
     if (ahead(text)) {
       // Since we found the text, increase the CharStream's index.
@@ -144,10 +157,12 @@ lexer grammar HbsLexer;
     return _input.LA(offset + 1) == EOF;
   }
 
+  // is current lookahead starts with `text`
   private boolean ahead(final String text) {
     return ahead(text, 0);
   }
 
+  // find word in target lookahead.
   private boolean ahead(final String text, int offset) {
 
     // See if `text` is ahead in the CharStream.
