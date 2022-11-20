@@ -1,42 +1,22 @@
-parser grammar HbsParser;
 
-options {
-  tokenVocab=HbsLexer;
-}
 
-@members {
+# Parser
 
-  public String[] tokenNames() {
-    String[] tokenNames = new String[_SYMBOLIC_NAMES.length];
-    for (int i = 0; i < tokenNames.length; i++) {
-      // terminals
-      tokenNames[i] = VOCABULARY.getLiteralName(i);
-      if (tokenNames[i] == null) {
-        // non terminals
-        tokenNames[i] = VOCABULARY.getSymbolicName(i);
-      }
 
-      if (tokenNames[i] == null) {
-        tokenNames[i] = "<INVALID>";
-      }
-    }
-    return tokenNames;
-  }
+## handlebar
+* decorator - https://handlebarsjs.com/guide/partials.html#inline-partials
 
-  void setStart(String start) {
-  }
 
-  void setEnd(String end) {
-  }
+## ANTLR parser syntax  (be sure to familiar yoursef with ENBF notation)
+* https://github.com/antlr/antlr4/blob/master/doc/parser-rules.md
 
-  private String join(List<Token> tokens) {
-    StringBuilder text = new StringBuilder();
-    for(Token token: tokens) {
-      text.append(token.getText());
-    }
-    return text.toString();
-  }
-}
+## notes for each rule
+
+* test cases - handlebars/src/test/java/com/github/jknack/handlebars/internal/HbsParserTest.java
+
+
+// copied from file: handlebars/src/main/antlr4/com/github/jknack/handlebars/internal/HbsParser.g4
+```
 
 template
   : body EOF
@@ -87,6 +67,9 @@ rawBlock
     END_RAW_BLOCK nameEnd=QID END_RAW
   ;
 
+// {{#each people as |person|}}
+// ...
+// {{/each}}
 blockParams
   :
     AS PIPE QID+ PIPE
@@ -108,6 +91,8 @@ elseStmt
     (inverseToken=UNLESS | START inverseToken=ELSE) END unlessBody=body
   ;
 
+// {{else condtion}} body
+// {{^}} body
 elseStmtChain
   :
     (inverseToken=UNLESS | START inverseToken=ELSE) sexpr blockParams? END unlessBody=body
@@ -120,16 +105,19 @@ unless
     END_BLOCK nameEnd=QID END
   ;
 
+// match  {{{ }}}
 tvar
   :
    START_T sexpr END_T
   ;
 
+// match  {{& }}
 ampvar
   :
    START_AMP sexpr END
   ;
 
+// match  {{ }}
 var
   :
    START DECORATOR? sexpr END
@@ -184,3 +172,4 @@ hash
 
 comment
   : COMMENT;
+```

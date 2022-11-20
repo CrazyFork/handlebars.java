@@ -1,5 +1,8 @@
 # First and foremost
 
+* !test cases - handlebars/src/test/java/com/github/jknack/handlebars/internal/HbsParserTest.java
+
+
 a quick overview of handlebar syntax
   * https://gist.github.com/nessthehero/4ea763350fc93100f002
   * https://handlebarsjs.com/guide/partials.html#partial-contexts
@@ -9,7 +12,7 @@ a quick overview of handlebar syntax
 
 ---
 
-# ANTLR lexer syntax (be sure to familiar yoursef with ENBF notation)
+# ANTLR lexer syntax
 lexer located at `handlebars/src/main/antlr4/com/github/jknack/handlebars/internal/HbsLexer.g4`, it is written using antlr syntax.
 
 * ! https://github.com/antlr/antlr4/blob/master/doc/lexer-rules.md
